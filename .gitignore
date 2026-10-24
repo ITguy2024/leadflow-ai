@@ -1,0 +1,32 @@
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+# Private environment files
+.env
+.env.*
+!.env.example
+
+# Authentication and database backups
+auth/
+backups/
+*.dump
+
+# Historical development files
+*.before-*
+*.backup
+*.bak
+
+# Node.js dependencies and builds
+node_modules/
+dist/
+coverage/
+
+# Temporary files
+*.log
+*.tmp
+*.swp
+
+# Local editor settings
+.vscode/

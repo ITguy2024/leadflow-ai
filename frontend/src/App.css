@@ -1,0 +1,227 @@
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: #f7f9fc;
+  color: #192337;
+}
+
+button, input, select { font: inherit; }
+
+button {
+  cursor: pointer;
+  border: 1px solid #dbe2eb;
+  background: white;
+  padding: 10px 16px;
+  border-radius: 9px;
+}
+
+button:hover { background: #eef3fc; }
+button:disabled { opacity: .6; cursor: default; }
+
+.app { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 235px;
+  background: #14213b;
+  color: white;
+  padding: 30px 18px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.brand {
+  font-size: 21px;
+  font-weight: 800;
+  margin-bottom: 55px;
+}
+
+.side-label, .eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: #7890af;
+}
+
+.nav-active, .nav-muted {
+  padding: 13px;
+  margin-top: 12px;
+  border-radius: 8px;
+}
+
+.nav-active { background: #28446e; }
+.nav-muted { color: #a9bbd5; }
+
+.side-bottom {
+  position: absolute;
+  bottom: 25px;
+  font-size: 12px;
+  color: #a9bbd5;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 36px;
+}
+
+.header, .panel-heading, .stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+
+h1 { margin: 8px 0; font-size: 30px; }
+h2 { margin: 0; font-size: 19px; }
+h3 { margin-top: 25px; }
+
+p { color: #728096; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 35px 0;
+}
+
+.stat, .panel {
+  background: white;
+  border: 1px solid #e3e9f2;
+  border-radius: 15px;
+}
+
+.stat { padding: 22px; }
+.stat-top { color: #748197; font-size: 13px; }
+.stat strong { display: block; font-size: 34px; margin-top: 15px; }
+.stat-icon { font-size: 22px; }
+
+.panel { overflow: hidden; }
+
+.panel-heading {
+  padding: 24px;
+  flex-wrap: wrap;
+}
+
+.panel-heading p { margin: 6px 0 0; font-size: 13px; }
+
+.filters { display: flex; gap: 9px; flex-wrap: wrap; }
+
+input, select {
+  border: 1px solid #dbe2eb;
+  background: white;
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-width: 110px;
+}
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td {
+  text-align: left;
+  padding: 17px;
+  border-top: 1px solid #edf0f5;
+  font-size: 13px;
+}
+th { background: #fafbfd; color: #758399; }
+td small { display: block; color: #8290a3; margin-top: 5px; }
+.tag {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 7px;
+  background: #f0f2f5;
+  white-space: nowrap;
+}
+.tag.high, .tag.failed { background: #fee9e7; color: #b43832; }
+.tag.medium, .tag.pending { background: #fff1da; color: #945e0f; }
+.tag.low, .tag.sent { background: #e3f6ec; color: #16794c; }
+.view { color: #2757a8; }
+.empty { padding: 40px; text-align: center; color: #758399; }
+.error { color: #ba3030; padding: 15px; background: #ffeded; }
+.footer { margin-top: 25px; font-size: 12px; }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #11182788;
+  display: flex;
+  justify-content: flex-end;
+}
+.details {
+  width: min(450px, 100%);
+  padding: 35px;
+  background: white;
+  overflow-y: auto;
+  box-shadow: -10px 0 30px #0002;
+}
+.close { float: right; }
+.details dl {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 14px;
+}
+.details dt { color: #758399; }
+.details dd { margin: 0; overflow-wrap: anywhere; }
+.summary { line-height: 1.8; white-space: pre-wrap; }
+
+@media (max-width: 1050px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .app { display: block; }
+  .sidebar { width: 100%; padding: 18px; }
+  .side-label, .nav-active, .nav-muted, .side-bottom { display: none; }
+  .brand { margin: 0; }
+  .main { padding: 18px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .header { align-items: flex-start; flex-wrap: wrap; }
+}
+
+.sidebar-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 6px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #b7c9e6;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background: #20385f;
+  color: #ffffff;
+}
+
+.sidebar-link.active {
+  background: #2a4776;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.sidebar-link:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+#dashboard,
+#leads,
+#notifications,
+#executions,
+#system-health {
+  scroll-margin-top: 20px;
+}
+

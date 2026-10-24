@@ -1,0 +1,35 @@
+
+services:
+  dashboard-api:
+    build: ./backend
+    container_name: lead-crm-dashboard-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    expose:
+      - "3001"
+    networks:
+      - lead-crm-network
+    security_opt:
+      - no-new-privileges:true
+
+  dashboard-frontend:
+    build: ./frontend
+    container_name: lead-crm-dashboard-frontend
+    restart: unless-stopped
+    depends_on:
+      - dashboard-api
+    ports:
+      - "127.0.0.1:3000:80"
+    volumes:
+      - ./auth/.htpasswd:/etc/nginx/auth/.htpasswd:ro
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - lead-crm-network
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  lead-crm-network:
+    external: true
+    name: lead-crm-network

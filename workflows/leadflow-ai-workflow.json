@@ -1,0 +1,562 @@
+{
+  "name": "AI Lead Management - 01 Lead Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Client Inquiry Form",
+        "formDescription": "Submit your inquiry and our team will contact you.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company"
+            },
+            {
+              "fieldLabel": "Service Needed",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Website Development"
+                  },
+                  {
+                    "option": "AI Automation"
+                  },
+                  {
+                    "option": "CRM Integration"
+                  },
+                  {
+                    "option": "IT Support"
+                  },
+                  {
+                    "option": "Other"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Project Description",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Estimated Budget",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Under $500"
+                  },
+                  {
+                    "option": "$500 - $1,500"
+                  },
+                  {
+                    "option": "$1,500 - $5,000"
+                  },
+                  {
+                    "option": "Above $5,000"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7b57b3ef-16d5-4ddb-afe0-4943f80a5049",
+      "name": "On form submission"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c0b64ba2-2013-4b12-8002-209197571328",
+              "name": "full_name",
+              "value": "={{ ($json[\"Full Name\"] ?? \"\").trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "10377140-74ee-4970-a765-9fe73056b124",
+              "name": "email",
+              "value": "={{ ($json[\"Email\"] ?? \"\").trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "0cb9aa29-514e-4f5d-a028-2d9672950568",
+              "name": "company",
+              "value": "={{ ($json[\"Company\"] ?? \"\").trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "e5662bbc-268a-4333-b967-c7afa8d561a8",
+              "name": "service_needed",
+              "value": "={{ $json[\"Service Needed\"] ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "78bbca37-d5fe-4658-b367-bc85b82ceedf",
+              "name": "project_description",
+              "value": "={{ ($json[\"Project Description\"] ?? \"\").trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "2befa849-74bb-400e-b840-7d5e4ca4771a",
+              "name": "estimated_budget",
+              "value": "={{ $json[\"Estimated Budget\"] ?? \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b2c6ae2c-f013-47aa-9b31-9e7772187ddc",
+      "name": "Normalize Lead Data"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "18e34182-bc0f-4da6-a6fb-d20984bf8127",
+              "leftValue": "=\n{{ \n  /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test($json.email) &&\n  $json.full_name.length > 0 &&\n  $json.project_description.length > 0 &&\n  $json.service_needed.length > 0\n}}\n",
+              "rightValue": "True",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "0eaa2367-d33a-4480-b6f9-9ef6e9fc7fd4",
+      "name": "Validate Lead"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads",
+          "mode": "list",
+          "cachedResultName": "leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "full_name": "={{ $json.full_name }}",
+            "email": "={{ $json.email }}",
+            "company": "={{ $json.company }}",
+            "service_needed": "={{ $json.service_needed }}",
+            "project_description": "={{ $json.project_description }}",
+            "estimated_budget": "={{ $json.estimated_budget }}",
+            "ai_priority": "={{ $json.ai_priority }}",
+            "ai_summary": "={{ $json.ai_summary }}"
+          },
+          "matchingColumns": [
+            "email",
+            "service_needed"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "service_needed",
+              "displayName": "service_needed",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "project_description",
+              "displayName": "project_description",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "estimated_budget",
+              "displayName": "estimated_budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "ai_priority",
+              "displayName": "ai_priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "ai_summary",
+              "displayName": "ai_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "b74533b5-57fb-4f7f-81f2-9c31df907e4c",
+      "name": "Save Lead to Database"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst lead = $('Normalize Lead Data').first().json;\n\nconst response = $input.first().json.content.parts[0].text;\n\nconst cleaned = response\n  .replace(/```json\\s*/gi, '')\n  .replace(/```\\s*/g, '')\n  .trim();\n\nlet analysis;\n\ntry {\n  analysis = JSON.parse(cleaned);\n} catch (error) {\n  analysis = {\n    priority: \"Review\",\n    summary: \"AI response needs manual review.\",\n    recommended_action: \"Review the inquiry manually.\"\n  };\n}\n\nreturn [\n  {\n    json: {\n      ...lead,\n      ai_priority: [\"High\", \"Medium\", \"Low\"].includes(analysis.priority)\n        ? analysis.priority\n        : \"Review\",\n      ai_summary: typeof analysis.summary === \"string\"\n        ? analysis.summary\n        : \"AI response needs manual review.\",\n      recommended_action: typeof analysis.recommended_action === \"string\"\n        ? analysis.recommended_action\n        : \"Review the inquiry manually.\"\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        0
+      ],
+      "id": "7a409fdd-7b25-44cd-8050-489212c6aa26",
+      "name": "Process AI Response"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\nYou are an AI lead qualification assistant for a technology services company.\n\nAnalyze the customer inquiry below.\n\nCustomer Name: {{ $('Normalize Lead Data').item.json.full_name }}\nService: {{ $('Normalize Lead Data').item.json.service_needed }}\nProject Description: {{ $('Normalize Lead Data').item.json.project_description }}\nEstimated Budget: {{ $('Normalize Lead Data').item.json.estimated_budget }}\n\nYour tasks:\n1. Assign a priority: High, Medium, or Low.\n2. Summarize the customer's requirements in 1-2 sentences.\n3. Recommend the next action for the team.\n\nPriority rules:\n- High: Clearly urgent, critical operational problem, or serious business impact.\n- Medium: Clear project requirements without immediate urgency.\n- Low: General inquiry, vague requirements, or exploratory interest.\n- Do not assume a high budget automatically means high priority.\n\nRespond with ONLY valid JSON in this format:\n\n{\n  \"priority\": \"Medium\",\n  \"summary\": \"Brief summary of the inquiry.\",\n  \"recommended_action\": \"Recommended next step.\"\n}\n\nDo not include markdown formatting or any additional text.\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        -16
+      ],
+      "id": "bdea32fd-5266-4617-99e7-2e4201c4125d",
+      "name": "AI Lead Qualification"
+    },
+    {
+      "parameters": {
+        "sendTo": "sales-team@example.com",
+        "subject": "=\n{{ 'New AI Lead - ' + $('Process AI Response').first().json.ai_priority }}\n",
+        "message": "=\n{{\n(() => {\n  const l = $('Process AI Response').first().json;\n  const esc = v => String(v ?? '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;')\n    .replace(/'/g, '&#39;');\n\n  return `\n    <div style=\"font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#222\">\n      <h2>New Customer Inquiry</h2>\n      <hr>\n      <p><strong>Customer:</strong> ${esc(l.full_name)}</p>\n      <p><strong>Email:</strong> ${esc(l.email)}</p>\n      <p><strong>Company:</strong> ${esc(l.company)}</p>\n      <p><strong>Service:</strong> ${esc(l.service_needed)}</p>\n      <p><strong>Budget:</strong> ${esc(l.estimated_budget)}</p>\n      <hr>\n      <h3>AI Lead Qualification</h3>\n      <p><strong>Priority:</strong> ${esc(l.ai_priority)}</p>\n      <p><strong>Summary:</strong> ${esc(l.ai_summary)}</p>\n      <p><strong>Recommended Action:</strong> ${esc(l.recommended_action)}</p>\n      <hr>\n      <p style=\"color:#777;font-size:12px\">\n        Generated by n8n AI Lead Management System\n      </p>\n    </div>`;\n})()\n}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1728,
+        -112
+      ],
+      "id": "755870c9-8d98-42e5-ba56-eeb6531212e2",
+      "name": "Notify Sales Team"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "\nWITH reserved AS (\n    INSERT INTO notification_logs (\n        lead_id,\n        notification_type,\n        status\n    )\n    VALUES ($1, 'new_lead', 'pending')\n    ON CONFLICT (lead_id, notification_type)\n    DO NOTHING\n    RETURNING id\n)\nSELECT\n    EXISTS (SELECT 1 FROM reserved) AS should_send,\n    (SELECT id FROM reserved) AS notification_log_id;\n",
+        "options": {
+          "queryReplacement": "= {{ [ $json.id ] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "811eff03-4dbd-4f11-b748-8e8e1740641c",
+      "name": "Check Notification History"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "781d8d3d-85ee-45d7-8ca5-14ab4bd60c5d",
+              "leftValue": "=\n{{ $json.should_send.toBoolean() === true }}\n\n\n\n\n",
+              "rightValue": "SEND",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1536,
+        0
+      ],
+      "id": "e6b43439-a7f4-491a-91cc-2a7efee30f0d",
+      "name": "Should Send Notification?"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "\nUPDATE notification_logs\nSET\n    status = 'sent',\n    gmail_message_id = $2,\n    sent_at = NOW(),\n    error_message = NULL\nWHERE id = $1\n    AND notification_type = 'new_lead'\n    AND status = 'pending'\n    AND gmail_message_id IS NULL\n    AND NULLIF($2::text, '') IS NOT NULL\nRETURNING\n    id,\n    lead_id,\n    status,\n    gmail_message_id,\n    sent_at;\n",
+        "options": {
+          "queryReplacement": "=\n{{ [\n  $('Check Notification History').first().json.notification_log_id,\n  $json.id\n] }}\n\n"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1952,
+        -112
+      ],
+      "id": "c6e34f55-89e4-423e-8f60-d824867d0be9",
+      "name": "Record Notification Result"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Normalize Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Validate Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Lead": {
+      "main": [
+        [
+          {
+            "node": "AI Lead Qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Lead Qualification": {
+      "main": [
+        [
+          {
+            "node": "Process AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process AI Response": {
+      "main": [
+        [
+          {
+            "node": "Save Lead to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead to Database": {
+      "main": [
+        [
+          {
+            "node": "Check Notification History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Notification History": {
+      "main": [
+        [
+          {
+            "node": "Should Send Notification?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Send Notification?": {
+      "main": [
+        [
+          {
+            "node": "Notify Sales Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Sales Team": {
+      "main": [
+        [
+          {
+            "node": "Record Notification Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "tags": []
+}
