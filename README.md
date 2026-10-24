@@ -100,6 +100,23 @@ The system has been tested locally for:
 - The local deployment is intended for development and demonstration.
 - API/database health checks share a combined connectivity result.
 
+## Application Screenshots
+
+### Dashboard Overview
+![Dashboard Overview](docs/screenshots/01-dashboard-overview.png)
+
+### Leads Overview
+![Leads Overview](docs/screenshots/02-leads-overview.png)
+
+### Notification Monitoring Center
+![Notification Monitoring](docs/screenshots/03-notification-monitor.png)
+
+### n8n Execution Monitoring Center
+![Execution Monitoring](docs/screenshots/04-execution-monitor.png)
+
+### System Health
+![System Health](docs/screenshots/05-system-health.png)
+
 ## Project Status
 
 Portfolio Version 1.0 — Locally developed and tested.
