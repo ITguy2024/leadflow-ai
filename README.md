@@ -121,6 +121,23 @@ The system has been tested locally for:
 
 Portfolio Version 1.0 — Locally developed and tested.
 
+## Video Demonstration
+
+Watch my complete LeadFlow AI project walkthrough:
+
+[Watch LeadFlow AI Video Demonstration on YouTube](https://www.youtube.com/watch?v=8VlP2_tNNVk)
+
+The demonstration covers:
+- n8n workflow automation and Google Gemini AI lead qualification
+- PostgreSQL database and Gmail notification integration
+- React and Node.js CRM dashboard
+- Notification and execution monitoring
+- System health checks and Docker-based deployment
+
+**Viewing tip:** Select 1080p (HD) in YouTube's quality settings for clearer dashboard and workflow text.
+
+**Note:** This project runs in a local Docker environment. The video demonstrates the working application.
+
 ## Developer
 
 Joseph M. Nicolas
